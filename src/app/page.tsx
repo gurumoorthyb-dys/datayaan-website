@@ -13,6 +13,8 @@ export default async function Home() {
     "/home-page?populate[heroBackgroundImages][fields][0]=url&populate[clientLogos][fields][0]=url&populate[products][populate][0]=icon&populate[products][populate][1]=image&populate[techPartnerLogos][fields][0]=url&populate[testimonials][populate][0]=customerPhoto"
   );
 
+
+  console.log(homeData, 'HOME DATA')
   // Fetch global data for navbar domains
   const globalData = await fetchStrapiData(
     "/global?populate[navbarLinks][populate]=dropdown"
@@ -30,14 +32,6 @@ export default async function Home() {
     clientsTitle,
     clientLogos,
     products,
-    contactSectionTitle,
-    contactSectionDescription,
-    contactEmail,
-    contactPhone,
-    contactAddress,
-    socialInstagram,
-    socialLinkedIn,
-    socialFacebook,
     statsProjectsCount,
     statsEmployeesCount,
     statsCountriesCount,
@@ -45,7 +39,10 @@ export default async function Home() {
     testimonialsTitle,
     testimonialsSubtitle,
     testimonials,
+    themeColor
   } = homeData || {};
+
+  console.log(testimonials, 'TETEETETET')
 
   // Convert media fields properly
   const backgroundImages = getMediaUrl(heroBackgroundImages) || [];
@@ -89,6 +86,9 @@ export default async function Home() {
     });
   }
 
+  // Get font setting from global data
+  const { headingFont, bodyFont } = globalData || {};
+
   return (
     <div className="flex flex-col">
       <Hero
@@ -100,13 +100,23 @@ export default async function Home() {
         secondaryButtonLink={heroSecondaryButtonLink}
         backgroundColor={heroBackgroundColor}
         backgroundImages={backgroundImages}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+      />
+      <Products
+        products={processedProducts}
+        headingFont={headingFont}
+        bodyFont={bodyFont}
+        themeColor={themeColor}
       />
       <TrustedOutcomes
         projectsCount={statsProjectsCount}
         employeesCount={statsEmployeesCount}
         countriesCount={statsCountriesCount}
+        supportText={statsSupportText}
+        themeColor={themeColor}
+        headingFont={headingFont}
       />
-      <Products products={processedProducts} />
       {/* <Solutions /> */}
       <TechnologyPartners logos={technologyPartnerUrls} />
       <TrustSection

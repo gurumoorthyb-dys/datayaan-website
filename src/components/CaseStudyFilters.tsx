@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import CustomSelect from "@/components/ui/CustomSelect";
 
 interface FiltersProps {
     products: Array<{ id: number; name: string }>;
@@ -11,20 +12,20 @@ export default function CaseStudyFilters({ products, domains }: FiltersProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const handleProductChange = (value: string) => {
+    const handleProductChange = (e: { target: { name: string; value: string } }) => {
         const params = new URLSearchParams(searchParams.toString());
-        if (value) {
-            params.set("product", value);
+        if (e.target.value) {
+            params.set("product", e.target.value);
         } else {
             params.delete("product");
         }
         router.push(`/case-studies?${params.toString()}`);
     };
 
-    const handleDomainChange = (value: string) => {
+    const handleDomainChange = (e: { target: { name: string; value: string } }) => {
         const params = new URLSearchParams(searchParams.toString());
-        if (value) {
-            params.set("domain", value);
+        if (e.target.value) {
+            params.set("domain", e.target.value);
         } else {
             params.delete("domain");
         }
@@ -37,54 +38,60 @@ export default function CaseStudyFilters({ products, domains }: FiltersProps) {
 
     const hasFilters = searchParams.has("product") || searchParams.has("domain");
 
+    // Convert products to options format
+    const productOptions = [
+        { value: "", label: "All Products" },
+        ...products.map((product) => ({
+            value: product.name,
+            label: product.name,
+        })),
+    ];
+
+    // Convert domains to options format
+    const domainOptions = [
+        { value: "", label: "All Domains" },
+        ...domains.map((domain) => ({
+            value: domain,
+            label: domain,
+        })),
+    ];
+
     return (
-        <div className="mb-8 flex flex-wrap gap-4">
+        <div className="mb-8 flex flex-wrap gap-4 items-end">
             {/* Product Filter */}
-            <div>
-                <label htmlFor="product-filter" className="block text-sm font-medium text-neutral-700 mb-1">
+            <div className="min-w-[250px] max-w-[300px]">
+                <label htmlFor="product-filter" className="block text-sm font-medium text-neutral-700 mb-2">
                     Filter by Product
                 </label>
-                <select
-                    id="product-filter"
-                    className="px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                <CustomSelect
+                    name="product"
                     value={searchParams.get("product") || ""}
-                    onChange={(e) => handleProductChange(e.target.value)}
-                >
-                    <option value="">All Products</option>
-                    {products.map((product) => (
-                        <option key={product.id} value={product.name}>
-                            {product.name}
-                        </option>
-                    ))}
-                </select>
+                    onChange={handleProductChange}
+                    options={productOptions}
+                    placeholder="All Products"
+                />
             </div>
 
             {/* Domain Filter */}
-            <div>
-                <label htmlFor="domain-filter" className="block text-sm font-medium text-neutral-700 mb-1">
+            <div className="min-w-[250px] max-w-[300px]">
+                <label htmlFor="domain-filter" className="block text-sm font-medium text-neutral-700 mb-2">
                     Filter by Domain
                 </label>
-                <select
-                    id="domain-filter"
-                    className="px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                <CustomSelect
+                    name="domain"
                     value={searchParams.get("domain") || ""}
-                    onChange={(e) => handleDomainChange(e.target.value)}
-                >
-                    <option value="">All Domains</option>
-                    {domains.map((domain) => (
-                        <option key={domain} value={domain}>
-                            {domain}
-                        </option>
-                    ))}
-                </select>
+                    onChange={handleDomainChange}
+                    options={domainOptions}
+                    placeholder="All Domains"
+                />
             </div>
 
             {/* Clear Filters */}
             {hasFilters && (
-                <div className="flex items-end">
+                <div>
                     <button
                         onClick={clearFilters}
-                        className="px-4 py-2 text-sm text-primary hover:text-primary/80 transition-colors"
+                        className="px-4 py-2 text-sm bg-[#FA7C1E] text-white rounded-lg hover:bg-[#FA7C1E]/80 transition-colors"
                     >
                         Clear Filters
                     </button>

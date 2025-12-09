@@ -4,7 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import FooterVideos from "@/components/FooterVideos";
 import ScrollToTop from "@/components/ui/ScrollToTop";
-import { fetchStrapiData, STRAPI_URL } from "@/lib/strapi";
+import { fetchStrapiISR, STRAPI_URL } from "@/lib/strapi";
 import ScrollToHashHandler from "@/components/util/ScrollToHashHandler";
 import ScrollToTopOnRouteChange from "@/components/util/ScrollToTopOnRouteChange";
 import ContactUs from "@/components/ContactUs";
@@ -12,15 +12,16 @@ import { isLocalHost } from "@/lib/commonFunction";
 import { Suspense } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const globalData = await fetchStrapiData(
-    "/global?populate[favicon][fields][0]=url"
+  const globalData = await fetchStrapiISR(
+    "/global?populate[favicon][fields][0]=url",
+    3600 // Revalidate every hour
   );
 
   console.log(process.env, "ENVS");
 
   const faviconUrl =
     globalData?.favicon?.url &&
-    !process.env.NEXT_PUBLIC_STRAPI_URL?.includes("localhost")
+      !process.env.NEXT_PUBLIC_STRAPI_URL?.includes("localhost")
       ? `${globalData.favicon.url}`
       : `${process.env.NEXT_PUBLIC_STRAPI_URL}${globalData?.favicon?.url}`;
 
@@ -32,11 +33,11 @@ export async function generateMetadata(): Promise<Metadata> {
       "AI-driven, cutting-edge solutions across Healthcare, Logistics, Data Analytics, IoT, and Business Management.",
     icons: faviconUrl
       ? [
-          {
-            rel: "icon",
-            url: faviconUrl,
-          },
-        ]
+        {
+          rel: "icon",
+          url: faviconUrl,
+        },
+      ]
       : undefined,
   };
 }
@@ -48,12 +49,13 @@ export default async function RootLayout({
 }) {
   // Fetch global content, home page data, products, and domains
   const [globalData, homeData, productsData, domainsData] = await Promise.all([
-    fetchStrapiData(
-      "/global?populate[navbarLinks][populate]=dropdown&populate[companyLogo][fields][0]=url&populate[favicon][fields][0]=url&populate[footerVideos]=*"
+    fetchStrapiISR(
+      "/global?populate[navbarLinks][populate]=dropdown&populate[companyLogo][fields][0]=url&populate[favicon][fields][0]=url&populate[footerVideos]=*",
+      3600 // Revalidate every hour
     ),
-    fetchStrapiData("/home-page"),
-    fetchStrapiData("/products?fields[0]=name&fields[1]=slug"),
-    fetchStrapiData("/domains?fields[0]=name&fields[1]=slug"),
+    fetchStrapiISR("/home-page", 300), // Revalidate every 5 minutes
+    fetchStrapiISR("/products?fields[0]=name&fields[1]=slug&sort=order:asc", 600), // Revalidate every 10 minutes
+    fetchStrapiISR("/domains?fields[0]=name&fields[1]=slug", 600), // Revalidate every 10 minutes
   ]);
 
   const {
@@ -67,6 +69,8 @@ export default async function RootLayout({
     favicon,
     footerVideos,
   } = globalData || {};
+
+  console.log(navbarLinks, '2345678')
 
   // Get company logo URLs using centralized STRAPI_URL
   const companyLogoUrl = isLocalHost
@@ -104,8 +108,10 @@ export default async function RootLayout({
   // Inject "Company" menu items
   if (navbarLinks) {
     const companyLinkIndex = navbarLinks.findIndex(
-      (link: any) => link.label === "Company"
+      (link: any) => link.label === "Discover Us"
     );
+
+    console.log(companyLinkIndex, 'CINDEX')
     const leadershipItem = { label: "Leadership", href: "/company/leadership" };
     const aboutItem = { label: "About Us", href: "/company/about-us" };
 
@@ -164,12 +170,8 @@ export default async function RootLayout({
   const bodyFont = globalData?.bodyFont || "Outfit";
 
   // Convert font names to Google Fonts URL format
-  const formatFontName = (font: string) => font.replace(/\s+/g, "+");
-  const googleFontsUrl = `https://fonts.googleapis.com/css2?family=${formatFontName(
-    headingFont
-  )}:wght@400;500;600;700;800;900&family=${formatFontName(
-    bodyFont
-  )}:wght@300;400;500;600&display=swap`;
+  const formatFontName = (font: string) => font.replace(/\s+/g, '+');
+  const googleFontsUrl = `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=${formatFontName(headingFont)}:wght@400;500;600;700;800;900&family=${formatFontName(bodyFont)}:wght@300;400;500;600&display=swap`;
 
   return (
     <html lang="en">

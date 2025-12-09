@@ -18,7 +18,7 @@ export const TechnologyPartners = ({ logos = [] }: TechnologyPartnersProps) => {
     const row2 = logos.slice(midpoint);
 
     return (
-        <section className="py-2 bg-white border-neutral-100">
+        <section className="py-10 bg-white border-neutral-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Title */}

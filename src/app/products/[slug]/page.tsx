@@ -1,4 +1,4 @@
-import { fetchStrapiData, STRAPI_URL } from "@/lib/strapi";
+import { fetchStrapiISR, STRAPI_URL } from "@/lib/strapi";
 import { processRichText } from "@/lib/richtext";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -21,12 +21,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
     const { slug } = await params;
 
     const [productsData, homeData, globalData, productPageData] = await Promise.all([
-        fetchStrapiData(
-            `/products?filters[slug][$eq]=${slug}&populate[0]=heroBanner&populate[1]=icon&populate[2]=features.icon&populate[3]=useCases.image&populate[4]=caseStudies.thumbnail`
+        fetchStrapiISR(
+            `/products?filters[slug][$eq]=${slug}&populate[0]=heroBanner&populate[1]=icon&populate[2]=features.icon&populate[3]=useCases.image&populate[4]=caseStudies.thumbnail`,
+            600 // Revalidate every 10 minutes
         ),
-        fetchStrapiData("/home-page"),
-        fetchStrapiData("/global?populate[navbarLinks][populate]=dropdown"),
-        fetchStrapiData("/product-page"),
+        fetchStrapiISR("/home-page", 300),
+        fetchStrapiISR("/global?populate[navbarLinks][populate]=dropdown", 3600),
+        fetchStrapiISR("/product-page", 1800),
     ]);
 
 
@@ -111,7 +112,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                         {/* RIGHT IMAGE */}
                         <div className="relative w-full">
                             {heroBanner ? (
-                                <div className="relative h-[300px] md:h-[380px] lg:h-[420px] w-full rounded-2xl overflow-hidden shadow-lg border border-neutral-200/70">
+                                <div className="relative h-[300px] md:h-[380px] lg:h-[420px] w-full rounded-2xl overflow-hidden shadow-lg border border-neutral-200/70 items-start">
                                     <Image
                                         src={heroBanner}
                                         alt={product.name}
@@ -121,7 +122,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                                     />
                                 </div>
                             ) : (
-                                <div className="h-[350px] w-full rounded-2xl bg-neutral-100 flex items-center justify-center">
+                                <div className="h-[350px] w-full rounded-2xl bg-neutral-100 flex items-start justify-center">
                                     <p className="text-neutral-400">No image available</p>
                                 </div>
                             )}
@@ -244,7 +245,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 )}
 
                 <SmartCTASection
-                    title={productPageData?.ctaTitle || "Rea35637735367dy to get started?"}
+                    title={productPageData?.ctaTitle || "Ready to get started?"}
                     description={productPageData?.ctaDescription || "Book a demo to see how our product can help you."}
                     buttonText={productPageData?.ctaButtonText || "Book a Demo"}
                     buttonLink={productPageData?.ctaButtonLink || "/book-demo"}
@@ -256,7 +257,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 }
 
 export async function generateStaticParams() {
-    const productsData = await fetchStrapiData("/products?fields[0]=slug");
+    const productsData = await fetchStrapiISR("/products?fields[0]=slug&sort=order:asc", 600);
 
     if (!productsData || !Array.isArray(productsData)) {
         return [];
@@ -266,3 +267,6 @@ export async function generateStaticParams() {
         slug: product.slug,
     }));
 }
+
+// Enable dynamic params for ISR
+export const dynamicParams = true;

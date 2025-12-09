@@ -42,13 +42,13 @@ export default function BackButton({
     const searchParams = useSearchParams();
 
     // Apply circular styling if variant is circular
-    // Using the exact peachy-orange color from the design (#E89B6C)
+    // Using gray color to match the hero section background
     const circularClassName = variant === 'circular'
-        ? "inline-flex items-center justify-center p-3 rounded-full text-white transition-all hover:scale-105 shadow-lg border border-white/30"
+        ? "inline-flex items-center justify-center p-2 rounded-full text-neutral-700 transition-all hover:scale-105 shadow-lg border border-white/30"
         : className;
 
     const circularStyle = variant === 'circular'
-        ? { backgroundColor: 'rgb(220 135 84)' }
+        ? { backgroundColor: 'rgb(229 231 235)' }
         : undefined;
 
     const shouldShowLabel = variant === 'circular' ? false : showLabel;
@@ -99,7 +99,7 @@ export default function BackButton({
     if (backPath) {
         return (
             <Link href={backPath} className={circularClassName} style={circularStyle}>
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-4 h-4" />
                 {shouldShowLabel && defaultLabel}
             </Link>
         );

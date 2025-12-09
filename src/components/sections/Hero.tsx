@@ -1,12 +1,10 @@
 "use client";
 
-import React from 'react';
-import { Button } from '@/components/ui/Button';
-import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
-import Image from 'next/image';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 interface HeroProps {
     headline?: string;
@@ -17,6 +15,8 @@ interface HeroProps {
     secondaryButtonLink?: string;
     backgroundColor?: string;
     backgroundImages?: string[];
+    headingFont?: string;
+    bodyFont?: string;
 }
 
 export const Hero = ({
@@ -26,81 +26,129 @@ export const Hero = ({
     buttonLink,
     secondaryButtonText,
     secondaryButtonLink,
-    backgroundColor = '#ffffff',
-    backgroundImages = []
+    backgroundImages = [],
+    headingFont,
+    bodyFont
 }: HeroProps) => {
-    const [emblaRef] = useEmblaCarousel({ loop: true, duration: 60 }, [Autoplay({ delay: 5000 })]);
+
+    const [mounted, setMounted] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Filter out invalid images
+    const images = backgroundImages?.length > 0 ? backgroundImages : ["/5.JPG"];
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (images.length <= 1) return;
+
+        const interval = setInterval(() => {
+            setCurrentImageIndex((prev) => (prev + 1) % images.length);
+        }, 5000); // Change every 5 seconds
+
+        return () => clearInterval(interval);
+    }, [images.length]);
+
+    if (!mounted) return null;
 
     return (
-        <section className="relative flex w-full items-center justify-center overflow-hidden py-8 md:py-8">
-            {/* Background Carousel */}
-            <div className="absolute inset-0 z-0">
-                {backgroundImages.length > 0 && (
-                    <div className="h-full w-full overflow-hidden" ref={emblaRef}>
-                        <div className="flex h-full">
-                            {backgroundImages.map((src, index) => (
-                                <div key={index} className="relative h-full w-full flex-[0_0_100%]">
-                                    <Image
-                                        src={src}
-                                        alt={`Hero background ${index + 1}`}
-                                        fill
-                                        className="object-cover opacity-60"
-                                        priority={index === 0}
-                                    />
-                                    {/* Gradient Overlay */}
-                                    <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/30 via-neutral-950/50 to-neutral-950" />
-                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent opacity-40" />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
+        <section className="relative w-full min-h-[520px] flex items-center overflow-hidden">
+
+            {/* BACKGROUND IMAGE SLIDESHOW */}
+            <div className="absolute inset-0 -z-10">
+                {images.map((img, index) => (
+                    <motion.div
+                        key={img}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: index === currentImageIndex ? 1 : 0 }}
+                        transition={{ duration: 1.5, ease: "easeInOut" }}
+                        className="absolute inset-0 w-full h-full"
+                    >
+                        <Image
+                            src={img}
+                            alt={`Hero Background ${index + 1}`}
+                            fill
+                            priority={index === 0}
+                            className="object-cover object-right"
+                        />
+                    </motion.div>
+                ))}
             </div>
 
-            {/* Content */}
-            <div className="relative z-10 flex h-full flex-col justify-center px-4 sm:px-6 lg:px-8">
-                <div className="mx-auto max-w-7xl w-full text-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                    >
-                        <h1 className="mx-auto max-w-5xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl leading-tight text-center drop-shadow-sm text-neutral-900">
-                            {headline || <>Empower Your Data with <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600">Datayaan</span></>}
-                        </h1>
-                    </motion.div>
+            {/* GRADIENT OVERLAY (BEHIND CONTENT) */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-transparent -z-20"></div>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-                    >
-                        <p className="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-neutral-600 sm:text-xl font-light tracking-wide">
-                            {subheadline || "Seamlessly manage, analyze, and visualize your data with our enterprise-grade CMS. Built for scalability, security, and performance."}
-                        </p>
-                    </motion.div>
+            {/* LEFT CONTENT */}
+            <div className="relative w-full lg:w-1/2 px-6 sm:px-12 lg:px-16 py-10">
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-                        className="mt-8 flex flex-wrap gap-4 justify-center"
-                    >
-                        <Link href={buttonLink || "#"}>
-                            <Button size="lg" className="text-base px-6 py-3 h-auto font-medium tracking-wide shadow-sm hover:shadow-md transition-all duration-300 bg-primary hover:bg-primary/90 border-none rounded-full">
-                                {buttonText || "Get Started"}
+                {/* Headline */}
+                <motion.h2
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    className="text-4xl sm:text-5xl lg:text-4xl font-semibold text-slate-900 leading-tight mb-4"
+                    style={{ fontFamily: headingFont }}
+                >
+                    {headline ? (
+                        <span dangerouslySetInnerHTML={{ __html: headline }} />
+                    ) : (
+                        <>
+                            Build Future Ready Digital <br /> Solutions with Us
+                        </>
+                    )}
+                </motion.h2>
+
+                {/* Subheadline */}
+                <motion.p
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="text-lg text-slate-700 max-w-xl mb-8 text-justify"
+                    style={{ fontFamily: bodyFont }}
+                >
+                    {subheadline ||
+                        "We help businesses modernize systems, automate operations, and engineer scalable digital platforms that grow with your vision."}
+                </motion.p>
+
+                {/* Buttons */}
+                <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    className="flex flex-wrap gap-4"
+                >
+                    <Link href={buttonLink || "#"}>
+                        <Button
+                            size="lg"
+                            className="px-6 py-1.5 h-auto text-base font-bold text-white bg-[#ff8800] rounded-full shadow-md hover:shadow-lg hover:scale-105 transition-all"
+                        >
+                            {buttonText || "Talk to Us"}
+                        </Button>
+                    </Link>
+
+                    {secondaryButtonText && (
+                        <Link href={secondaryButtonLink || "#"}>
+                            <Button
+                                size="lg"
+                                className="px-6 py-5 h-auto text-base font-bold text-slate-600 bg-transparent border-2 border-slate-300 rounded-full hover:border-[#ff8800] hover:text-[#ff8800] transition-all"
+                            >
+                                {secondaryButtonText}
                             </Button>
                         </Link>
-                        {secondaryButtonText && (
-                            <Link href={secondaryButtonLink || "#"}>
-                                <Button variant="ghost" size="lg" className="text-base px-6 py-3 h-auto text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100 border border-neutral-300 font-medium tracking-wide rounded-full transition-all duration-300">
-                                    {secondaryButtonText} &rarr;
-                                </Button>
-                            </Link>
-                        )}
-                    </motion.div>
-                </div>
+                    )}
+                </motion.div>
+
             </div>
+
+            {/* CUSTOM MASK STYLE (If needed for further refinement, keeping simple for now) */}
+            <style jsx>{`
+                .hero-mask {
+                    mask-image: none !important;
+                    -webkit-mask-image: none !important;
+                }
+            `}</style>
         </section>
     );
 };

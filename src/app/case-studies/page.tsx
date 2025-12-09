@@ -1,4 +1,4 @@
-import { fetchStrapiData, STRAPI_URL } from "@/lib/strapi";
+import { fetchStrapiISR, STRAPI_URL } from "@/lib/strapi";
 import Link from "next/link";
 import Image from "next/image";
 import { Metadata } from "next";
@@ -38,9 +38,9 @@ export default async function CaseStudiesPage({
     searchParams: Promise<{ product?: string; domain?: string }>;
 }) {
     const { product, domain } = await searchParams;
-    const caseStudiesData = await fetchStrapiData("/case-studies?populate=*");
-    const productsData = await fetchStrapiData("/products");
-    const domainsData = await fetchStrapiData("/domains");
+    const caseStudiesData = await fetchStrapiISR("/case-studies?populate=*", 300);
+    const productsData = await fetchStrapiISR("/products?sort=order:asc", 600);
+    const domainsData = await fetchStrapiISR("/domains", 600);
 
     const caseStudies: CaseStudy[] = Array.isArray(caseStudiesData)
         ? caseStudiesData
@@ -81,12 +81,13 @@ export default async function CaseStudiesPage({
     }
 
     return (
-        <div className="min-h-screen bg-neutral-50">
+        <div className="min-h-screen bg-white">
             <PageHero
                 title="Case Studies"
                 subtitle="Explore how our solutions have helped businesses succeed"
                 backButtonPath="/"
                 backButtonLabel="Back"
+                backgroundImage="/case-studies-hero.png"
             />
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -95,9 +96,9 @@ export default async function CaseStudiesPage({
                 <CaseStudyFilters products={products} domains={domains} />
 
                 {/* Results Count */}
-                <p className="text-sm text-neutral-600 mb-6">
+                {/* <p className="text-sm text-neutral-600 mb-6">
                     Showing {filteredCaseStudies.length} case {filteredCaseStudies.length === 1 ? "study" : "studies"}
-                </p>
+                </p> */}
 
                 {/* Case Studies Grid */}
                 {filteredCaseStudies.length > 0 ? (
