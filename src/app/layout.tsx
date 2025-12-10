@@ -17,11 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
     3600 // Revalidate every hour
   );
 
-  console.log(process.env, "ENVS");
-
   const faviconUrl =
     globalData?.favicon?.url &&
-      !process.env.NEXT_PUBLIC_STRAPI_URL?.includes("localhost")
+    !process.env.NEXT_PUBLIC_STRAPI_URL?.includes("localhost")
       ? `${globalData.favicon.url}`
       : `${process.env.NEXT_PUBLIC_STRAPI_URL}${globalData?.favicon?.url}`;
 
@@ -33,11 +31,11 @@ export async function generateMetadata(): Promise<Metadata> {
       "AI-driven, cutting-edge solutions across Healthcare, Logistics, Data Analytics, IoT, and Business Management.",
     icons: faviconUrl
       ? [
-        {
-          rel: "icon",
-          url: faviconUrl,
-        },
-      ]
+          {
+            rel: "icon",
+            url: faviconUrl,
+          },
+        ]
       : undefined,
   };
 }
@@ -54,7 +52,10 @@ export default async function RootLayout({
       3600 // Revalidate every hour
     ),
     fetchStrapiISR("/home-page", 300), // Revalidate every 5 minutes
-    fetchStrapiISR("/products?fields[0]=name&fields[1]=slug&sort=order:asc", 600), // Revalidate every 10 minutes
+    fetchStrapiISR(
+      "/products?fields[0]=name&fields[1]=slug&sort=order:asc",
+      600
+    ), // Revalidate every 10 minutes
     fetchStrapiISR("/domains?fields[0]=name&fields[1]=slug", 600), // Revalidate every 10 minutes
   ]);
 
@@ -70,7 +71,7 @@ export default async function RootLayout({
     footerVideos,
   } = globalData || {};
 
-  console.log(navbarLinks, '2345678')
+  console.log(companyLogo, "COMPANY LOGOS", isLocalHost);
 
   // Get company logo URLs using centralized STRAPI_URL
   const companyLogoUrl = isLocalHost
@@ -111,7 +112,7 @@ export default async function RootLayout({
       (link: any) => link.label === "Discover Us"
     );
 
-    console.log(companyLinkIndex, 'CINDEX')
+    console.log(companyLinkIndex, "CINDEX");
     const leadershipItem = { label: "Leadership", href: "/company/leadership" };
     const aboutItem = { label: "About Us", href: "/company/about-us" };
 
@@ -170,8 +171,12 @@ export default async function RootLayout({
   const bodyFont = globalData?.bodyFont || "Outfit";
 
   // Convert font names to Google Fonts URL format
-  const formatFontName = (font: string) => font.replace(/\s+/g, '+');
-  const googleFontsUrl = `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=${formatFontName(headingFont)}:wght@400;500;600;700;800;900&family=${formatFontName(bodyFont)}:wght@300;400;500;600&display=swap`;
+  const formatFontName = (font: string) => font.replace(/\s+/g, "+");
+  const googleFontsUrl = `https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=${formatFontName(
+    headingFont
+  )}:wght@400;500;600;700;800;900&family=${formatFontName(
+    bodyFont
+  )}:wght@300;400;500;600&display=swap`;
 
   return (
     <html lang="en">
