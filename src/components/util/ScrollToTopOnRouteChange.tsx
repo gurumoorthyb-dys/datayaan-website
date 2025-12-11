@@ -4,22 +4,28 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 
 export default function ScrollToTopOnRouteChange() {
-    const pathname = usePathname();
-    const previousPath = useRef<string>("");
+  const pathname = usePathname();
+  const previousPath = useRef<string>("");
 
-    useEffect(() => {
-        const hash = window.location.hash;
+  useEffect(() => {
+    const hash = window.location.hash;
 
-        // CASE 1: If URL has hash → do NOT scroll to top (hash handler will manage scrolling)
-        if (hash) return;
+    // CASE 1: If URL has hash → do NOT scroll to top (hash handler will manage scrolling)
+    if (hash) return;
 
-        // CASE 2: If navigating between pages → scroll to top ONLY when pathname changes
-        if (previousPath.current && previousPath.current !== pathname) {
-            window.scrollTo({ top: 0 });
-        }
+    // CASE 2: If navigating between pages → scroll to top ONLY when pathname changes
+    if (previousPath.current && previousPath.current !== pathname) {
+      // Force instant scroll to avoid smooth-scroll interference
+      window.scrollTo({ top: 0, behavior: "instant" });
 
-        previousPath.current = pathname;
-    }, [pathname]);
+      // Double-check after a tiny delay to catch any layout shifts
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }, 10);
+    }
 
-    return null;
+    previousPath.current = pathname;
+  }, [pathname]);
+
+  return null;
 }

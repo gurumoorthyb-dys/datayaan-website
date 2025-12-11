@@ -18,8 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   );
 
   const faviconUrl =
-    globalData?.favicon?.url &&
-    !process.env.NEXT_PUBLIC_STRAPI_URL?.includes("localhost")
+    globalData?.favicon?.url && !isLocalHost
       ? `${globalData.favicon.url}`
       : `${process.env.NEXT_PUBLIC_STRAPI_URL}${globalData?.favicon?.url}`;
 
@@ -71,7 +70,7 @@ export default async function RootLayout({
     footerVideos,
   } = globalData || {};
 
-  console.log(companyLogo, "COMPANY LOGOS", isLocalHost);
+  console.log(navbarLinks, "2345678");
 
   // Get company logo URLs using centralized STRAPI_URL
   const companyLogoUrl = isLocalHost
@@ -226,7 +225,7 @@ export default async function RootLayout({
             `,
           }}
         />
-        {/* <ScrollToTopOnRouteChange /> */}
+        <ScrollToTopOnRouteChange />
         <ScrollToHashHandler />
         <Navbar
           links={navbarLinks}

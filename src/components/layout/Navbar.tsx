@@ -61,8 +61,13 @@ export const Navbar = ({
     return `/${href}`;
   };
 
-  const isActive = (href?: string) =>
-    pathname === normalizeHref(href) || pathname.includes(`${href}/`);
+  const isActive = (href?: string) => {
+    const normalized = normalizeHref(href);
+
+    if (normalized === "#") return false;
+
+    return pathname === normalized || pathname.includes(`${normalized}/`);
+  };
 
   const isParentActive = (link: NavLink) => {
     if (isActive(link.href) && link.href !== "#") return true;
@@ -96,53 +101,54 @@ export const Navbar = ({
            bg-white/60 backdrop-blur-2xl backdrop-saturate-150
            supports-[backdrop-filter]:bg-white/60"
       >
-        <div className="mx-auto flex h-[68px] max-w-7xl items-center px-6 lg:px-10">
+        <div className="mx-auto flex h-[58px] max-w-7xl items-center px-4 sm:px-6 lg:px-8">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             {companyLogo ? (
               <Image
                 src={companyLogo}
                 alt={siteTitle || "Company Logo"}
-                width={150}
-                height={50}
-                className="w-[150px] h-auto object-contain"
+                width={130}
+                height={40}
+                className="w-[120px] h-auto object-contain"
                 priority
               />
             ) : (
-              <span className="text-[20px] font-semibold tracking-wide text-primary">
+              <span className="text-[18px] font-bold tracking-tight text-primary">
                 {siteTitle || "Datayaan"}
               </span>
             )}
           </Link>
 
           {/* DESKTOP MENU */}
-          <div className="hidden md:flex items-center gap-8 ml-12 flex-1">
+          <div className="hidden md:flex items-center gap-6 ml-10 flex-1">
             {navLinks.map((link, index) => (
               <div
                 key={index}
-                className="relative flex items-center h-[40px]"
+                className="relative flex items-center"
                 onMouseEnter={() => !mobileOpen && setOpenDropdown(index)}
                 onMouseLeave={() => !mobileOpen && setOpenDropdown(null)}
+                style={{ height: "30px" }}
               >
                 {link.isDropDown && link.dropdown ? (
                   <>
                     <button
-                      className={`flex items-center gap-1 text-[14.8px] font-medium tracking-wide transition-colors duration-200 ${
+                      className={`cursor-pointer flex items-center gap-1 text-[13.5px] font-medium transition-colors duration-200 ${
                         openDropdown === index || isParentActive(link)
                           ? "text-primary"
-                          : "text-neutral-700 hover:text-primary"
+                          : "text-neutral-600 hover:text-primary"
                       }`}
                     >
                       {link.label}
                       <ChevronDown
-                        className={`w-4 h-4 transition-transform duration-300 ${
+                        className={`w-3.5 h-3.5 transition-transform duration-300 ${
                           openDropdown === index ? "rotate-180" : ""
                         }`}
                       />
                     </button>
 
                     <div
-                      className={`absolute left-0 top-[40px] w-64 rounded-xl border border-neutral-200 bg-white shadow-xl py-2 transition-all duration-250 ease-out ${
+                      className={`absolute left-0 top-[30px] w-56 rounded-lg border border-neutral-100 bg-white shadow-lg py-1.5 transition-all duration-200 ease-out ${
                         openDropdown === index
                           ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
                           : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
@@ -152,10 +158,10 @@ export const Navbar = ({
                         <Link
                           key={idx}
                           href={normalizeHref(item.href)}
-                          className={`block px-5 py-3 text-[14px] font-medium transition-all duration-150 ${
+                          className={`block px-4 py-2.5 text-[13px] font-medium transition-all duration-150 ${
                             isActive(item.href)
-                              ? "text-primary bg-primary/10"
-                              : "text-neutral-700 hover:text-primary hover:bg-neutral-100"
+                              ? "text-primary bg-primary/5"
+                              : "text-neutral-600 hover:text-primary hover:bg-neutral-50"
                           }`}
                           onClick={() => setOpenDropdown(null)}
                         >
@@ -167,10 +173,10 @@ export const Navbar = ({
                 ) : (
                   <Link
                     href={normalizeHref(link.href)}
-                    className={`text-[14.8px] font-medium tracking-wide transition-colors ${
+                    className={`text-[13.5px] font-medium transition-colors ${
                       isActive(link.href)
                         ? "text-primary"
-                        : "text-neutral-700 hover:text-primary"
+                        : "text-neutral-600 hover:text-primary"
                     }`}
                   >
                     {link.label}
@@ -181,20 +187,20 @@ export const Navbar = ({
           </div>
 
           {/* CTA */}
-          <div className="hidden md:block ml-auto">
+          <div className="hidden md:block flex-shrink-0">
             <Link href={normalizeHref(ctaLink || "/book-demo")}>
               <Button
                 size="sm"
-                className="px-5 text-[13.8px] font-semibold cursor-pointer"
+                className="h-9 px-4 text-[13px] font-semibold tracking-wide"
               >
-                {ctaText || "Let's Get Started"}
+                {ctaText || "Let's Talk"}
               </Button>
             </Link>
           </div>
 
           {/* MOBILE TOGGLE */}
           <button
-            className="md:hidden ml-auto text-neutral-700"
+            className="md:hidden ml-auto text-neutral-700 cursor-pointer"
             onClick={() => setMobileOpen(true)}
           >
             <Menu size={26} />
@@ -219,7 +225,10 @@ export const Navbar = ({
             <span className="font-semibold text-[16px]">
               <span className="text-primary">{siteTitle || "Datayaan"}</span>
             </span>
-            <button onClick={() => setMobileOpen(false)}>
+            <button
+              onClick={() => setMobileOpen(false)}
+              className="cursor-pointer"
+            >
               <span className="text-neutral-700">
                 <X size={24} />
               </span>
@@ -235,7 +244,7 @@ export const Navbar = ({
                       onClick={() =>
                         setOpenDropdown(openDropdown === index ? null : index)
                       }
-                      className="flex items-center justify-between w-full text-[14.8px] font-medium text-neutral-800"
+                      className="flex items-center justify-between w-full text-[14.8px] font-medium text-neutral-800 cursor-pointer"
                     >
                       {link.label}
                       <ChevronDown

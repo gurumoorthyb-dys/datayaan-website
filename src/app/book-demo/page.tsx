@@ -33,9 +33,9 @@ export default async function BookDemoPage() {
                     <div className="absolute inset-0 bg-gradient-to-br from-neutral-900/50 via-neutral-800/40 to-neutral-700/50" />
 
                     {/* Back Button - Top Left Corner */}
-                    <div className="absolute top-4 left-4 sm:left-6 lg:left-8 z-20">
-                        <BackButton defaultPath="/contact" variant="circular" />
-                    </div>
+                    {/* <div className="absolute top-4 left-4 sm:left-6 lg:left-8 z-20"> */}
+                        {/* <BackButton defaultPath="/contact" variant="circular" /> */}
+                    {/* </div> */}
 
                     <div className="relative z-10 max-w-3xl mx-auto">
                         <h1 className="text-3xl sm:text-4xl font-bold text-white mb-6 mt-12">
