@@ -31,7 +31,7 @@ export const Footer = () => {
     { icon: faXTwitter, href: "https://x.com/DatayaanContact?s=20" },
     {
       icon: faLinkedinIn,
-      href: "https://www.linkedin.com/company/datayaan-solutions-private-limited/?viewAsMember=true",
+      href: "https://www.linkedin.com/company/datayaan-solutions-private-limited/",
     },
     {
       icon: faInstagram,
