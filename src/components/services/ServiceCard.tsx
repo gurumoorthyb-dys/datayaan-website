@@ -68,7 +68,7 @@ export default function ServiceCard({
                     <CheckCircle2 size={20} strokeWidth={2.5} />
                   </span>
                   <h4 className="font-bold text-slate-900 uppercase text-sm tracking-wide">
-                    Deliverables
+                    Capabilities
                   </h4>
                 </div>
                 <div

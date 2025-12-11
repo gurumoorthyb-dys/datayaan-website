@@ -56,7 +56,7 @@ export default function DomainsShowcase({ domains }: DomainsShowcaseProps) {
         </div>
 
         {/* Static Tech Grid - No Animations */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-4 place-items-center">
           {domains.map((domain, idx) => {
             const Icon = domainIcons[domain.name] || Building2;
             const isOrange = idx % 2 === 0;

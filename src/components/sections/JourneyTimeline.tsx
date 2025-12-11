@@ -95,11 +95,7 @@ export default function JourneyTimeline({ journey }: JourneyTimelineProps) {
 
                   {/* Content Card (Alternating Side - Opposite to Date) */}
                   <div
-                    className={`w-full md:w-1/2 pl-12 md:pl-0 ${
-                      !isEvent
-                        ? "md:pr-12 md:text-right md:order-first"
-                        : "md:pl-12"
-                    }`}
+                    className={`w-full md:w-1/2 pl-12 md:pl-0 ${"md:pl-12"}`}
                   >
                     <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition-shadow duration-300 relative group">
                       {/* Connecting Line (Mobile/Desktop dynamic) */}
@@ -125,7 +121,7 @@ export default function JourneyTimeline({ journey }: JourneyTimelineProps) {
                       {item.points && (
                         <ul
                           className={`space-y-2 ${
-                            !isEvent && "md:flex md:flex-col md:items-end"
+                            !isEvent && "md:flex md:flex-col"
                           }`}
                         >
                           {item.points
@@ -137,12 +133,10 @@ export default function JourneyTimeline({ journey }: JourneyTimelineProps) {
                                 className="flex items-start gap-2 text-sm text-slate-600 leading-relaxed"
                               >
                                 <div
-                                  className={`mt-1.5 w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0 ${
-                                    !isEvent ? "md:order-1 md:ml-2 md:mr-0" : ""
-                                  }`}
+                                  className={`mt-1.5 w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0 ${""}`}
                                 />
                                 <span
-                                  className={!isEvent ? "md:text-right" : ""}
+                                // className={!isEvent ? "md:text-right" : ""}
                                 >
                                   {point.replace(/^[-*]\s+/, "")}
                                 </span>

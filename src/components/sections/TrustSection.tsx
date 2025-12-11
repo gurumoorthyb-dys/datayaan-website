@@ -52,7 +52,7 @@ export const TrustSection = ({
         </div>
 
         {/* Side-by-side grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start ">
           {/* LEFT: Client Logos */}
           {clientLogos.length > 0 && (
             <div className="flex flex-col">
@@ -61,7 +61,7 @@ export const TrustSection = ({
               </h3>
 
               {/* Static Grid Layout */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-4 h-[400px] overflow-y-auto custom-scrollbar">
                 {clientLogos.map((logo, i) => (
                   <div
                     key={i}
