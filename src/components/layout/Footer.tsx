@@ -16,7 +16,7 @@ export const Footer = () => {
   const productLinks = [
     { label: "Yaantrac", href: "/products/yaantrac" },
     { label: "Rakaz", href: "/products/rakaz" },
-    { label: "Waste Matrix", href: "/products/product-wma" },
+    { label: "WMA", href: "/products/product-wma" },
     { label: "Medyaan", href: "/products/medyaan" },
     { label: "Medyaan Pet OS", href: "/products/medyaan-pet-os" },
   ];
